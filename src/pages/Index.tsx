@@ -1,11 +1,102 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from 'react';
+import Header from '@/components/Header';
+import StartScreen from '@/components/StartScreen';
+import GameBoard from '@/components/GameBoard';
+import WinScreen from '@/components/WinScreen';
+import { useAudio } from '@/hooks/useAudio';
+
+/**
+ * Main Game Container
+ * Manages game states: start → playing → win
+ * 
+ * CUSTOMIZATION:
+ * - Add more game modes or difficulty levels
+ * - Include high score tracking with localStorage
+ * - Add different puzzle themes or images
+ */
+
+type GameState = 'start' | 'playing' | 'won';
 
 const Index = () => {
+  const [gameState, setGameState] = useState<GameState>('start');
+  const [gridSize, setGridSize] = useState(3);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [gameStats, setGameStats] = useState({ moves: 0, time: 0 });
+  const { playButtonClick, playWinSound } = useAudio();
+
+  // Handle game start
+  const handleStart = (size: number) => {
+    setGridSize(size);
+    setGameState('playing');
+  };
+
+  // Handle win condition
+  const handleWin = (moves: number, time: number) => {
+    setGameStats({ moves, time });
+    if (soundEnabled) {
+      playWinSound();
+    }
+    setGameState('won');
+  };
+
+  // Handle restart with same grid size
+  const handleRestart = () => {
+    setGameState('playing');
+  };
+
+  // Handle back to menu
+  const handleBackToMenu = () => {
+    setGameState('start');
+  };
+
+  // Toggle sound
+  const handleToggleSound = () => {
+    if (soundEnabled) {
+      playButtonClick();
+    }
+    setSoundEnabled(!soundEnabled);
+  };
+
+  // SEO: Update page title dynamically
+  useEffect(() => {
+    document.title = 'Slide Puzzle - Retro Arcade Game';
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background text-foreground">
+      <Header soundEnabled={soundEnabled} onToggleSound={handleToggleSound} />
+      
+      <main className="container mx-auto px-4 pb-12">
+        {gameState === 'start' && (
+          <StartScreen
+            onStart={handleStart}
+            onButtonClick={() => soundEnabled && playButtonClick()}
+          />
+        )}
+
+        {gameState === 'playing' && (
+          <GameBoard
+            gridSize={gridSize}
+            onWin={handleWin}
+            soundEnabled={soundEnabled}
+          />
+        )}
+
+        {gameState === 'won' && (
+          <WinScreen
+            moves={gameStats.moves}
+            time={gameStats.time}
+            gridSize={gridSize}
+            onRestart={handleRestart}
+            onBackToMenu={handleBackToMenu}
+            onButtonClick={() => soundEnabled && playButtonClick()}
+          />
+        )}
+      </main>
+
+      {/* Accessibility: Screen reader announcements */}
+      <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {gameState === 'won' && `Puzzle solved in ${gameStats.moves} moves and ${gameStats.time} seconds`}
       </div>
     </div>
   );
