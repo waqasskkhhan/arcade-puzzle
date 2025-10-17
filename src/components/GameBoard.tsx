@@ -54,12 +54,13 @@ const GameBoard = ({ gridSize, onWin, soundEnabled }: GameBoardProps) => {
 
   // Calculate grid size for responsive layout
   const getGridSize = () => {
-    const maxSize = Math.min(window.innerWidth - 32, window.innerHeight - 300, 600);
-    return maxSize;
+    if (typeof window === 'undefined') return 400;
+    const maxSize = Math.min(window.innerWidth - 64, window.innerHeight - 300, 500);
+    return Math.max(250, maxSize);
   };
 
   const gridPixelSize = getGridSize();
-  const tileSize = gridPixelSize / gridSize;
+  const gap = 8; // Gap between tiles in pixels
 
   return (
     <div className="flex flex-col items-center gap-6 w-full">
@@ -82,29 +83,40 @@ const GameBoard = ({ gridSize, onWin, soundEnabled }: GameBoardProps) => {
       {/* Puzzle Grid */}
       <div
         className={cn(
-          'relative bg-card border-4 border-primary/30 rounded-3xl',
+          'relative bg-card border-4 border-primary/30 rounded-3xl p-2',
           'shadow-2xl',
-          'mx-auto'
+          'mx-auto overflow-hidden'
         )}
         style={{
           width: `${gridPixelSize}px`,
           height: `${gridPixelSize}px`,
-          boxShadow: '0 0 40px rgba(0, 255, 255, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.1)',
+          boxShadow: 'var(--shadow-glow)',
         }}
         role="grid"
         aria-label={`${gridSize} by ${gridSize} sliding puzzle`}
       >
-        {tiles.map((tile) => (
-          <Tile
-            key={tile.value}
-            value={tile.value}
-            position={tile.position}
-            isEmpty={tile.isEmpty}
-            gridSize={gridSize}
-            onClick={() => handleTileClick(tile.position)}
-            isMoving={movingTile === tile.position}
-          />
-        ))}
+        <div 
+          className="relative w-full h-full"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+            gridTemplateRows: `repeat(${gridSize}, 1fr)`,
+            gap: `${gap}px`,
+          }}
+        >
+          {tiles.map((tile) => (
+            <Tile
+              key={tile.value}
+              value={tile.value}
+              position={tile.position}
+              isEmpty={tile.isEmpty}
+              gridSize={gridSize}
+              gap={gap}
+              onClick={() => handleTileClick(tile.position)}
+              isMoving={movingTile === tile.position}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Instructions */}

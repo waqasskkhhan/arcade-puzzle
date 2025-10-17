@@ -21,8 +21,15 @@ const Index = () => {
   const [gameState, setGameState] = useState<GameState>('start');
   const [gridSize, setGridSize] = useState(3);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [gameStats, setGameStats] = useState({ moves: 0, time: 0 });
   const { playButtonClick, playWinSound } = useAudio();
+
+  // Apply theme to document
+  useEffect(() => {
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(theme);
+  }, [theme]);
 
   // Handle game start
   const handleStart = (size: number) => {
@@ -57,14 +64,27 @@ const Index = () => {
     setSoundEnabled(!soundEnabled);
   };
 
+  // Toggle theme
+  const handleToggleTheme = () => {
+    if (soundEnabled) {
+      playButtonClick();
+    }
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   // SEO: Update page title dynamically
   useEffect(() => {
     document.title = 'Slide Puzzle - Retro Arcade Game';
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Header soundEnabled={soundEnabled} onToggleSound={handleToggleSound} />
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+      <Header 
+        soundEnabled={soundEnabled} 
+        onToggleSound={handleToggleSound}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
+      />
       
       <main className="container mx-auto px-4 pb-12">
         {gameState === 'start' && (

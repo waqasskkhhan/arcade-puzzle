@@ -16,22 +16,24 @@ interface TileProps {
   position: number;
   isEmpty: boolean;
   gridSize: number;
+  gap: number;
   onClick: () => void;
   isMoving: boolean;
 }
 
-const Tile = memo(({ value, position, isEmpty, gridSize, onClick, isMoving }: TileProps) => {
+const Tile = memo(({ value, position, isEmpty, gridSize, gap, onClick, isMoving }: TileProps) => {
   const row = Math.floor(position / gridSize);
   const col = position % gridSize;
 
-  // Calculate tile position based on grid
+  // Calculate tile position with gap consideration
   const tileStyle = {
-    transform: `translate(${col * 100}%, ${row * 100}%)`,
-    transition: isMoving ? 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)' : 'none',
+    gridColumn: col + 1,
+    gridRow: row + 1,
+    transition: isMoving ? 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)' : 'all 0.3s ease-out',
   };
 
   if (isEmpty) {
-    return null; // Don't render empty tile
+    return <div style={tileStyle} className="w-full h-full" />; // Invisible placeholder for empty space
   }
 
   // Gradient colors for tiles - cycle through different hues
@@ -50,7 +52,7 @@ const Tile = memo(({ value, position, isEmpty, gridSize, onClick, isMoving }: Ti
     <button
       onClick={onClick}
       className={cn(
-        'absolute w-full h-full p-1 cursor-pointer',
+        'w-full h-full cursor-pointer',
         'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background',
         'touch-manipulation select-none'
       )}
@@ -59,20 +61,20 @@ const Tile = memo(({ value, position, isEmpty, gridSize, onClick, isMoving }: Ti
     >
       <div
         className={cn(
-          'w-full h-full rounded-2xl',
+          'w-full h-full rounded-xl md:rounded-2xl',
           'bg-gradient-to-br',
           getTileColor(value),
           'shadow-lg hover:shadow-xl',
           'flex items-center justify-center',
-          'text-2xl md:text-4xl font-bold',
+          'text-xl md:text-3xl lg:text-4xl font-bold',
           'text-primary-foreground',
           'transform transition-all duration-200',
-          'hover:scale-105 active:scale-95',
+          'hover:scale-[1.02] active:scale-95',
           'border-2 border-white/20',
-          isMoving && 'animate-tile-move'
+          isMoving && 'scale-95'
         )}
         style={{
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
         }}
       >
         {value}
