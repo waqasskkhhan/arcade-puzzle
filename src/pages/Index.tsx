@@ -3,7 +3,9 @@ import Header from '@/components/Header';
 import StartScreen from '@/components/StartScreen';
 import GameBoard from '@/components/GameBoard';
 import WinScreen from '@/components/WinScreen';
+import StatsScreen from '@/components/StatsScreen';
 import { useAudio } from '@/hooks/useAudio';
+import { useGameStats } from '@/hooks/useGameStats';
 
 /**
  * Main Game Container
@@ -15,7 +17,7 @@ import { useAudio } from '@/hooks/useAudio';
  * - Add different puzzle themes or images
  */
 
-type GameState = 'start' | 'playing' | 'won';
+type GameState = 'start' | 'playing' | 'won' | 'stats';
 
 const Index = () => {
   const [gameState, setGameState] = useState<GameState>('start');
@@ -24,6 +26,7 @@ const Index = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [gameStats, setGameStats] = useState({ moves: 0, time: 0 });
   const { playButtonClick, playWinSound } = useAudio();
+  const { records, saveRecord, getBestRecords, clearStats, totalGames } = useGameStats();
 
   // Apply theme to document
   useEffect(() => {
@@ -40,6 +43,7 @@ const Index = () => {
   // Handle win condition
   const handleWin = (moves: number, time: number) => {
     setGameStats({ moves, time });
+    saveRecord(gridSize, moves, time);
     if (soundEnabled) {
       playWinSound();
     }
@@ -72,6 +76,16 @@ const Index = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
+  // Show stats
+  const handleShowStats = () => {
+    setGameState('stats');
+  };
+
+  // Close stats
+  const handleCloseStats = () => {
+    setGameState('start');
+  };
+
   // SEO: Update page title dynamically
   useEffect(() => {
     document.title = 'Slide Puzzle - Retro Arcade Game';
@@ -90,6 +104,7 @@ const Index = () => {
         {gameState === 'start' && (
           <StartScreen
             onStart={handleStart}
+            onShowStats={handleShowStats}
             onButtonClick={() => soundEnabled && playButtonClick()}
           />
         )}
@@ -99,6 +114,7 @@ const Index = () => {
             gridSize={gridSize}
             onWin={handleWin}
             soundEnabled={soundEnabled}
+            onBackToMenu={handleBackToMenu}
           />
         )}
 
@@ -109,6 +125,17 @@ const Index = () => {
             gridSize={gridSize}
             onRestart={handleRestart}
             onBackToMenu={handleBackToMenu}
+            onButtonClick={() => soundEnabled && playButtonClick()}
+          />
+        )}
+
+        {gameState === 'stats' && (
+          <StatsScreen
+            records={records}
+            bestRecords={getBestRecords()}
+            totalGames={totalGames}
+            onClose={handleCloseStats}
+            onClear={clearStats}
             onButtonClick={() => soundEnabled && playButtonClick()}
           />
         )}

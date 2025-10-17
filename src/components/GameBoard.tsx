@@ -3,6 +3,19 @@ import Tile from './Tile';
 import { usePuzzle } from '@/hooks/usePuzzle';
 import { useAudio } from '@/hooks/useAudio';
 import { cn } from '@/lib/utils';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 /**
  * Game Board Component
@@ -18,11 +31,12 @@ interface GameBoardProps {
   gridSize: number;
   onWin: (moves: number, time: number) => void;
   soundEnabled: boolean;
+  onBackToMenu: () => void;
 }
 
-const GameBoard = ({ gridSize, onWin, soundEnabled }: GameBoardProps) => {
+const GameBoard = ({ gridSize, onWin, soundEnabled, onBackToMenu }: GameBoardProps) => {
   const { tiles, moves, timer, isWon, moveTile, startGame } = usePuzzle(gridSize);
-  const { playTileMove } = useAudio();
+  const { playTileMove, playButtonClick } = useAudio();
   const [movingTile, setMovingTile] = useState<number | null>(null);
   const [hasWon, setHasWon] = useState(false);
 
@@ -64,6 +78,45 @@ const GameBoard = ({ gridSize, onWin, soundEnabled }: GameBoardProps) => {
 
   return (
     <div className="flex flex-col items-center gap-6 w-full">
+      {/* Back Button */}
+      <div className="w-full max-w-lg">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-primary/30 hover:border-primary hover:bg-primary/10"
+              onClick={() => soundEnabled && playButtonClick()}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Menu
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent className="bg-background/95 backdrop-blur border-primary/30">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Leave Current Game?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to go back to the main menu? Your current progress will be lost.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => soundEnabled && playButtonClick()}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={() => {
+                  soundEnabled && playButtonClick();
+                  onBackToMenu();
+                }}
+                className="bg-primary hover:bg-primary/90"
+              >
+                Yes, Go Back
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+
       {/* Stats Display */}
       <div className="flex gap-6 md:gap-12 text-center">
         <div className="flex flex-col">

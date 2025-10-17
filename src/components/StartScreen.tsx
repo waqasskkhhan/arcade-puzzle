@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Play } from 'lucide-react';
+import { Play, BarChart3 } from 'lucide-react';
 
 /**
  * Start Screen Component
@@ -13,10 +13,11 @@ import { Play } from 'lucide-react';
 
 interface StartScreenProps {
   onStart: (gridSize: number) => void;
+  onShowStats: () => void;
   onButtonClick: () => void;
 }
 
-const StartScreen = ({ onStart, onButtonClick }: StartScreenProps) => {
+const StartScreen = ({ onStart, onShowStats, onButtonClick }: StartScreenProps) => {
   const handleStart = (size: number) => {
     onButtonClick();
     onStart(size);
@@ -70,6 +71,19 @@ const StartScreen = ({ onStart, onButtonClick }: StartScreenProps) => {
             5 × 5 <span className="ml-2 text-sm opacity-80">(Hard)</span>
           </Button>
         </div>
+
+        {/* Stats Button */}
+        <Button
+          variant="outline"
+          onClick={() => {
+            onButtonClick();
+            onShowStats();
+          }}
+          className="w-full mt-4 border-2 border-secondary/30 hover:border-secondary hover:bg-secondary/10 text-lg py-6 rounded-2xl"
+        >
+          <BarChart3 className="h-5 w-5 mr-2" />
+          View Statistics
+        </Button>
 
         {/* Instructions */}
         <div className="mt-8 p-4 bg-muted/30 rounded-xl border border-primary/10">
