@@ -23,7 +23,7 @@ const Header = ({ soundEnabled, onToggleSound, theme, onToggleTheme }: HeaderPro
     <header className="w-full max-w-4xl mx-auto px-4 py-6 flex items-center justify-between">
       <div className="flex flex-col">
         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-          Slide Puzzle
+          Arcade Puzzle
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Classic arcade puzzle game
