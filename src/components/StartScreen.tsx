@@ -28,7 +28,7 @@ const StartScreen = ({ onStart, onShowStats, onButtonClick }: StartScreenProps) 
       {/* Title */}
       <div className="text-center mb-12">
         <h1 className="text-6xl md:text-8xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-glow-pulse">
-          Slide Puzzle
+          Arcade Puzzle
         </h1>
         <p className="text-xl md:text-2xl text-muted-foreground">
           Retro Arcade Edition
