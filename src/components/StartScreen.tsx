@@ -27,10 +27,6 @@ const StartScreen = ({ onStart, onShowStats, onButtonClick }: StartScreenProps) 
     <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 animate-slide-in">
       {/* Title */}
       <div className="text-center mb-12">
-      
-        <p className="text-xl md:text-2xl text-muted-foreground">
-          Retro Arcade Edition
-        </p>
         <div className="mt-6 flex items-center justify-center gap-2">
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           <div className="w-2 h-2 rounded-full bg-secondary animate-pulse delay-75" />
